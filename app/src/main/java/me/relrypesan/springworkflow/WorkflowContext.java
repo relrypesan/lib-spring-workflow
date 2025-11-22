@@ -4,7 +4,7 @@ import me.relrypesan.springworkflow.registries.WorkflowRegistry;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.Collections;
+import java.util.stream.Collectors;
 
 public class WorkflowContext {
     private final ConcurrentHashMap<WorkflowRegistry<?>, Object> data = new ConcurrentHashMap<>();
@@ -28,7 +28,11 @@ public class WorkflowContext {
         return data.containsKey(key);
     }
 
-    public Map<WorkflowRegistry<?>, Object> asMap() {
-        return Collections.unmodifiableMap(data);
+    public Map<String, Object> asMap() {
+        return data.entrySet()
+                .stream()
+                .map(data -> Map.entry(data.getKey().id(), data.getValue()))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
+
 }
